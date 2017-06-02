@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户行为监控</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <link href="media/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+
+    <link href="media/css/style.css" rel="stylesheet" type="text/css"/>
+
+    <script src="js/util/util.js"></script>
+
+<style>
+.app-link a{color:#000000}
+</style>
+
+<script>
+$(document).ready(function(){
+	$.ajax({
+    url: "http://localhost:8888/appInfo/get",
+    type: "GET",
+    dataType:"json",
+    data : {
+            "uid":GetQueryString('uid')
+    },
+    success:function(data){
+    	var json=eval(data);
+    	var appPanel=document.getElementById("appPanel");
+    	var html="";
+    	$.each(json, function(i, obj) {  
+    		
+
+    	console.log(i+"obj.appName="+obj.appName);  
+    	// var appName=json[i].appName;
+    	
+    	html+=
+    	'<div class="row-fluid">'+
+    	'<div class="span4" style="margin-left:15px;">'+
+                        '<div class="portlet box blue">'+
+                            '<div class="portlet-title" >'+
+                                '<div class="app-link">'+
+                                    // '<a href="index.html" >'+
+                                    "<a href=\"index.html?uid="+GetQueryString('uid')+"&appId="+obj.appId+"&appName="+obj.appName+"\">"+
+                                    '<div class="caption"><i class="icon-reorder"></i>'+
+                                    obj.appName+
+                                    '</div>'+
+                                '</a>'+
+                                '</div>'+
+                                '<div class="tools">'+
+                                	"<a href=\"#\" id=\"updateApp"+obj.appId+"\" class=\"config\"></a>"+
+                                    // '<a href="#" data-toggle="modal" data-target="#deleteApp" class="remove"></a>'+
+                                    	"<a href=\"#\" id=\"delApp"+obj.appId+"\" class=\"remove\"></a>"+
+                                '</div>'+
+                            '</div>'+
+                            '<div class="portlet-body" style="background:url(images/app-back.jpg)">'+
+                                '<div class="row" >'+
+                                    '<div class="col-xs-3 col-md-offset-1" >'+
+                                        '<div class="huge">'+obj.visitCount+'</div>'+
+                                        '<div><i class="fa fa-user fa-1x"></i>访问数</div>'+
+                                    '</div>'+
+                                    '<div class="col-xs-3 col-md-offset-1" >'+
+                                        '<div class="huge">'+obj.operCount+'</div>'+
+                                        '<div ><i class="fa fa-hand-o-up fa-1x"></i>操作数</div>'+
+                                    '</div>'+
+                                    '<div class="col-xs-3 col-md-offset-1">'+
+                                        '<div class="huge">'+obj.errorCount+'</div>'+
+                                        '<div ><i class="fa fa-exclamation-circle fa-1x"></i>出错数</div>'+
+                                 '   </div>'+
+                                '</div>'+
+                           ' </div>'+
+                       ' </div>'+
+                   ' </div>';
+            if((i+1)%3==0 && i>0){
+            	html+='</div><div class="row-fluid">';
+            }
+
+     //        $("#delApp"+obj.appId).bind("click",function(){
+						// $("#del_app_id").val(obj.appId);
+						// $("#delAppName").html("<strong>"+obj.appId+"</strong>");
+						// $('#delAppModal').modal('show');
+					// 	console.log("点击了删除");
+					// });
+		$(document).on("click", "#delApp"+obj.appId, function() {
+					$("#del_app_id").val(obj.appId);
+					$("#delAppName").html("<strong>"+obj.appName+"</strong>");
+					$('#delAppModal').modal('show');
+		   			console.log("点击了删除");
+		});
+
+		$(document).on("click", "#updateApp"+obj.appId, function() {
+					$("#upd_app_id").val(obj.appId);
+					$("#upd_app_name").val(obj.appName);
+					$("#upd_app_url").val(obj.url);
+					$('#configAppModal').modal('show');
+		   			console.log("点击了修改");
+		});		
+	}); 
+
+    	appPanel.innerHTML=html+'</div>';
+    },
+ error:function(){
+ 	console.log("服务器连接失败，无法获取应用");
+ 	document.getElementById("errorTip").style.display="";
+ 	document.getElementById("errorMessage").innerHTML="服务器连接失败，无法获取应用信息";
+ }
+
+
+});
+
+});
+</script>
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+        
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">用户：<script>document.write(getUserName(GetQueryString('uid')));</script></a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <a href="#" onclick="window.location.href='application.html?uid='+GetQueryString('uid');"><i class="fa fa-th-large fa-fw"></i>所用应用</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('index.html')"><i class="fa fa-dashboard fa-fw"></i>应用概况</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>云服务用户操作记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationDashboard.html')"><i class="fa fa-hand-o-up fa-fw"></i>操作概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationList.html')"><i class="fa fa-list fa-fw"></i>操作详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="userVisit.html"><i class="fa fa-users fa-fw"></i>云服务用户浏览记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitDashboard.html')"><i class="fa fa-eye fa-fw"></i>浏览概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitList.html')"><i class="fa fa-list fa-fw"></i>浏览详情及用户轨迹</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="error.html"><i class="fa fa-exclamation-circle fa-fw"></i>应用出错记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorDashboard.html')"><i class="fa fa-bell fa-fw"></i>出错概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorList.html')"><i class="fa fa-list fa-fw"></i>出错详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('heatMap.html')"><i class="fa fa-fire fa-fw"></i>页面点击热图</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('setting.html')"><i class="fa fa-wrench fa-fw"></i>应用设置</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('help.html')"><i class="fa fa-question-circle fa-fw"></i>帮助</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <div id="page-wrapper">
+            <div class="row">
+            <br>
+                <div class="col-lg-6">
+                    <h1 class="page-header">我的应用</h1>
+                </div>
+                <!-- /.col-lg-6 -->
+
+                <div class="col-lg-6">
+            		<div class="alert alert-warning" style="display:none;" id="errorTip">
+						<a href="#"  onclick="document.getElementById('errorTip').style.display='none';">
+							&times;
+						</a>
+						<strong>抱歉！</strong>
+						<div id="errorMessage">
+						连接服务器失败。
+						</div>
+					</div>
+            	</div>
+           </div>
+           <!-- /.row -->
+           		
+                <div class="col-lg-12">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addApp" >添加应用</button>
+            	</div>
+            	
+            	<!-- 这里是app的展示面板 -->
+            	<br>
+
+            	
+            	<div id="appPanel" style="margin-top:50px;">
+            	<center>
+            	<h2>您还没有应用哦！
+            		<br>
+                    <small>赶紧去添加新的应用吧！</small>
+                </h2>
+                </center>
+                </div>
+
+
+                </div>
+                <!-- /.paper-wrapper -->
+
+    			<!-- Modal -->
+                <div class="modal fade" id="addApp" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">添加应用</h4>
+                            </div>
+                            <div class="modal-body">
+                            <form name="form1" role="form" >
+                                <ul>
+                                    <li>
+                                    	<input type="hidden" id="upd_app_id" >
+                                        <div  style="font-size:20px">应用名称：</div>
+                                        <input id="appName"  class="form-control" type="text" placeholder="输入应用名称" onblur="checkName(this.value,'addNameTip');">
+                                        <div id="addNameTip" style="display:inline;color:#FF6A6A"></div>
+                                    </li>
+                                    <br>
+                                    <li>
+                                        <div  style="font-size:20px">应用url：</div>
+                                        <input id="appUrl"  class="form-control" type="text" placeholder="输入应用url" onblur="checkUrl(this.value,'addUrlTip');">
+                                        <div id="addUrlTip" style="display:inline;color:#FF6A6A"></div>
+                                    </li>
+                                    <br>
+                                    <li style="list-style-type:none">
+                                    <center>
+                                    <div id="addTip"  class="alert alert-success" style="width:500px;display:none;">添加成功！</div>
+                                    </center>
+                                    </li>
+                                </ul>
+                            </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" onclick="createApp()">添加</button>
+                            
+                            </div>
+                            
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+        
+
+
+
+                <div class="modal fade" id="configAppModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">修改应用</h4>
+                            </div>
+                            <div class="modal-body">
+                                <ul>
+                                    <li>
+                                        <div  style="font-size:20px" >应用名称：</div>
+                                        <input id="upd_app_name"  class="form-control" type="text" placeholder="输入应用名称" onblur="checkName(this.value,'updateNameTip');">
+                                        <div id="updateNameTip" style="display:inline;color:#FF6A6A"></div>
+                                    </li>
+                                    <br>
+                                    <li>         	
+                                        <div  style="font-size:20px">应用url：</div>
+                                        <input id="upd_app_url"  class="form-control" type="text" placeholder="输入应用url" onblur="checkUrl(this.value,'updateUrlTip');">
+                                        <div id="updateUrlTip" style="display:inline;color:#FF6A6A"></div>
+                                    </li>
+                                    <br>
+                                    <li style="list-style-type:none">
+                                    <center>
+                                    <div id="updTip"  class="alert alert-success" style="width:500px;display:none;">修改成功！</div>
+                                    </center>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="btn_updApp">修改</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+                
+
+                <div class="modal fade" id="delAppModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">删除应用</h4>
+                            </div>
+                            <div class="modal-body" >
+                                <div style="font-size:20px">
+                                确认删除该应用 - <span id="delAppName"></span>？
+                                <div style="font-size:10px">
+                                <p>删除应用的同时，也会删除该应用的所有历史记录数据，请注意.</p>
+								<p>删除应用点击[删除]按钮，取消删除操作请点击[取消]按钮.</p>
+								</div>
+								</div>
+								<input type="hidden" id="del_app_id" >
+
+                                <center>
+                                <div id="delTip"  class="alert alert-success" style="width:500px;display:none;">删除成功！</div>
+                                </center>
+                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="btn_delApp">删除</button>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
+                <!-- /.modal -->
+
+			</div>
+			<!-- /.wrapper -->
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+
+    
+<script>
+function checkUrl(url,tipId){
+	var tip=document.getElementById(tipId);
+	tip.innerHTML="";
+	var RegUrl = new RegExp(); 
+	RegUrl.compile("^((https|http|ftp|rtsp|mms)?://)" 
+     + "+(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" 
+     + "(([0-9]{1,3}\\.){3}[0-9]{1,3}" 
+     + "|" 
+     + "([0-9a-z_!~*'()-]+\\.)*" 
+     + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\\." 
+     + "[a-z]{2,6})" 
+     + "(:[0-9]{1,4})?" 
+     + "((/?)|" 
+     + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$" );
+	if (!RegUrl.test(url)) { 
+		console.log('错误的url'); 
+		tip.innerHTML="请检查URL是否合法！";
+		return false;
+	} else{
+	console.log('正确的url'); 
+	return true;
+}
+}
+
+function checkName(name,tipId){
+	var tip=document.getElementById(tipId);
+	tip.innerHTML="";
+	if (name.length==0 ) { 
+		console.log('错误的name'); 
+		tip.innerHTML="应用名称不能为空！";
+		return false;
+	}else if(name.length>20){
+		console.log('错误的name'); 
+		tip.innerHTML="应用名称长度不能大于20！";
+		return false;
+	}
+	 else{
+	
+	console.log('正确的name'); 
+	return true;
+	}
+}
+
+
+
+$("#btn_updApp").click(function(){
+	if(checkUrl($("#upd_app_url").val(),'updateUrlTip') && checkName($("#upd_app_name").val(),'updateNameTip') ) {
+	$.ajax({
+                url: "http://localhost:8888/app/update",
+                type: "GET",
+                dataType:"json",
+                data : {
+                        "appId":$("#upd_app_id").val(),
+                        "appName":$("#upd_app_name").val(),
+                        "url":$("#upd_app_url").val()
+                },
+                success:function(data){
+                	console.log('进入修改的success方法');
+                	var obj=eval(data);
+                	if(obj.result.ret_code==1)
+                    {
+                    	$("#upd_app_id").val("");
+                    	$("#upd_app_name").val("");
+                    	$("#upd_app_url").val("");
+                        document.getElementById("updTip").style.display="";
+                        
+                        console.log('已修改');
+						setTimeout(function(){ window.location.reload(); }, 1000);
+                        
+                    }
+                },
+             error:function(){
+             	console.log("服务器连接失败，无法修改应用");
+             	document.getElementById("updTip").style.display="";
+             	document.getElementById("updTip").innerHTML="服务器连接失败，无法修改应用";
+             }
+            })
+	
+		}
+	}
+   
+    	);
+
+$("#btn_delApp").click(function(){
+	$.ajax({
+                url: "http://localhost:8888/app/delete",
+                type: "GET",
+                dataType:"json",
+                data : {
+                        "appId":$("#del_app_id").val(),
+                },
+                success:function(data){
+                	console.log('进入删除的success方法');
+                	var obj=eval(data);
+                	if(obj.result.ret_code==1)
+                    {
+                    	$("#del_app_id").val("");
+                        document.getElementById("delTip").style.display="";
+                        
+                        console.log('已删除');
+						setTimeout(function(){ window.location.reload(); }, 1000);
+                        
+                    }
+                },
+             error:function(){
+             	console.log("服务器连接失败，无法删除应用");
+             	document.getElementById("delTip").style.display="";
+             	document.getElementById("delTip").innerHTML="服务器连接失败，无法删除应用";
+             }
+            })
+	
+	}
+   
+    	);
+
+
+
+function createApp(){
+	var appName=document.form1.appName.value;
+	var url=document.form1.appUrl.value;
+	if(checkUrl(url,'addUrlTip')&& checkName(appName,'addNameTip') )
+	{
+	$.ajax({
+                url: "http://localhost:8888/app/create",
+                type: "GET",
+                dataType:"json",
+                data : {
+                        "uid":GetQueryString('uid'),
+                        "appName":appName,
+                        "url":url
+                },
+                success:function(data){
+                	console.log('进入success方法');
+                	var obj=eval(data);
+                	if(obj.result.ret_code==1)
+                    {
+                        
+                        document.getElementById("addTip").style.display="";
+                        console.log('已添加');
+                        // window.location.href="application.html?uid="+GetQueryString('uid');
+						setTimeout(function(){ window.location.reload(); }, 1000);
+                        
+                    }
+                },
+             error:function(){
+             	console.log("服务器连接失败，无法添加应用");
+             	document.getElementById("addTip").style.display="";
+             	document.getElementById("addTip").innerHTML="服务器连接失败，无法添加应用";
+             }
+            })
+	
+	}
+}
+
+
+</script>
+
+
+</body>
+
+</html>

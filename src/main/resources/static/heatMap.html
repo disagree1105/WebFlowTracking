@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户行为监控</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <script src="js/heatmap.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+
+    <script src="js/util/util.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+<script>
+    var appId=GetQueryString('appId');
+    var list=getHeatmap(appId);
+    var url = getAppUrl(appId);
+</script>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">用户：<script>document.write(getUserName(GetQueryString('uid')));</script></a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <a href="#" onclick="window.location.href='application.html?uid='+GetQueryString('uid');"><i class="fa fa-th-large fa-fw"></i>所用应用</a>
+                        </li>
+                        <li class="sidebar-search">
+                        <font color="#337ab7">当前应用：
+                        <script>
+                        document.write(getAppName());
+                        </script>
+                        </font>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('index.html')"><i class="fa fa-dashboard fa-fw"></i>应用概况</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>云服务用户操作记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationDashboard.html')"><i class="fa fa-hand-o-up fa-fw"></i>操作概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationList.html')"><i class="fa fa-list fa-fw"></i>操作详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="userVisit.html"><i class="fa fa-users fa-fw"></i>云服务用户浏览记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitDashboard.html')"><i class="fa fa-eye fa-fw"></i>浏览概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitList.html')"><i class="fa fa-list fa-fw"></i>浏览详情及用户轨迹</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="error.html"><i class="fa fa-exclamation-circle fa-fw"></i>应用出错记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorDashboard.html')"><i class="fa fa-bell fa-fw"></i>出错概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorList.html')"><i class="fa fa-list fa-fw"></i>出错详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('heatMap.html')"><i class="fa fa-fire fa-fw"></i>页面点击热图</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('setting.html')"><i class="fa fa-wrench fa-fw"></i>应用设置</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('help.html')"><i class="fa fa-question-circle fa-fw"></i>帮助</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">页面点击热图</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <iframe id="iframe" style="position:absolute;z-index:0;" frameborder="0" scrolling="no" width="1366px" height="640px"></iframe>
+                <div style="width:1366px; height:640px;border: 0px solid;border-color: grey;" id="heatmap" >
+                    <!-- <img src="images/bank.png"/> -->
+                </div>
+                <!-- 这是热图的容器 -->
+                <script type="text/javascript">
+                document.getElementById("iframe").src=url;
+            // 创建一个heatmap实例对象
+            // “h337” 是heatmap.js全局对象的名称.可以使用它来创建热点图实例
+            // 这里直接指定热点图渲染的div了.heatmap支持自定义的样式方案,网页外包接活具体可看官网api
+            var heatmapInstance = h337.create({
+                container: document.querySelector('#heatmap'),
+            });
+            //构建一些随机数据点,这里替换成你的业务数据
+            var points = [];
+            var max = 0;
+            var width = 1366;
+            var height = 613;
+
+            var len = list.length;
+            for(var i=0;i<list.length;i++){
+                var val=list[i].num;
+                max = Math.max(max,val);
+                var point = {
+                    x: list[i].x,
+                    y: list[i].y,
+                    value: val
+                };
+                points.push(point);
+            }
+            // while (len--) {
+            //     var val = Math.floor(Math.random()*100);
+            //     max = Math.max(max, val);
+            //     var point = {
+            //         x: Math.floor(Math.random()*width),
+            //         y: Math.floor(Math.random()*height),
+            //         value: val
+            //     };
+            //     points.push(point);
+            // }
+            var data = {
+                max: max,
+                data: points
+            };
+            //因为data是一组数据,所以直接setData
+            heatmapInstance.setData(data); //数据绑定还可以使用
+            </script>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+
+    
+
+</body>
+
+</html>

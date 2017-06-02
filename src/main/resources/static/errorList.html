@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户行为监控</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+        <!-- jQuery -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+
+    <script src="js/util/util.js"></script>
+    <script src="js/util/getList.js"></script>
+<style>
+li {list-style-type:none;}
+</style>
+</head>
+
+<body>
+<script type="text/javascript">
+    var appId=GetQueryString('appId');
+    var color=new Array('primary','green','yellow','red');
+</script>
+
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">用户：<script>document.write(getUserName(GetQueryString('uid')));</script></a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <a href="#" onclick="window.location.href='application.html?uid='+GetQueryString('uid');"><i class="fa fa-th-large fa-fw"></i>所用应用</a>
+                        </li>
+                        <li class="sidebar-search">
+                        <font color="#337ab7">当前应用：
+                        <script>
+                        document.write(getAppName());
+                        </script>
+                        </font>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('index.html')"><i class="fa fa-dashboard fa-fw"></i>应用概况</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>云服务用户操作记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationDashboard.html')"><i class="fa fa-hand-o-up fa-fw"></i>操作概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationList.html')"><i class="fa fa-list fa-fw"></i>操作详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="userVisit.html"><i class="fa fa-users fa-fw"></i>云服务用户浏览记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitDashboard.html')"><i class="fa fa-eye fa-fw"></i>浏览概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitList.html')"><i class="fa fa-list fa-fw"></i>浏览详情及用户轨迹</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="error.html"><i class="fa fa-exclamation-circle fa-fw"></i>应用出错记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorDashboard.html')"><i class="fa fa-bell fa-fw"></i>出错概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorList.html')"><i class="fa fa-list fa-fw"></i>出错详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('heatMap.html')"><i class="fa fa-fire fa-fw"></i>页面点击热图</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('setting.html')"><i class="fa fa-wrench fa-fw"></i>应用设置</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('help.html')"><i class="fa fa-question-circle fa-fw"></i>帮助</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">出错详情列表</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            错误列表
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example" >
+                                <thead>
+                                    <tr>
+                                        <th>错误id</th>
+                                        <th>错误名称</th>
+                                        <th>出错次数</th>
+                                        <th>最后出错时间</th>
+                                        <th>查看</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='errorListDiv'>
+                                    <!-- <tr>
+                                        <td>1</td>
+                                        <td>Uncaught ReferenceError: nlk is not defined</td>
+                                        <td>19</td>
+                                        <td>2017/4/24 14:02</td>
+                                        <td><button class="btn btn-outline btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                                            查看错误详情
+                                        </button></td>
+                                    </tr> -->
+
+                                    <script>
+                                    var list=getErrorList(GetQueryString('appId'));
+                                    var html="";
+                                    $.each(list, function(i, obj) {
+                                        html+='<tr>'+
+                                        '<td>'+i+'</td>'+
+                                        '<td>'+obj.errorMessage+'</td>'+
+                                        '<td>'+obj.errorCount+'</td>'+
+                                        '<td>'+obj.lastError+'</td>'+
+                                        '<td>'+
+                                        "<button class=\"btn btn-outline btn-primary btn-sm\" id=\"queryError"+i+"\">"+
+                                        '查看错误详情</button>'+
+                                        '</td>'+
+                                        '</tr>';
+
+                                        $(document).on("click", "#queryError"+i, function() {
+                                        var list=getErrorInfo(appId,obj.errorMessage);
+                                        var html="";
+                                        for(var i=0;i<list.length;i++){
+                                        html+= '<div class="panel panel-'+color[i%4]+'" >'+
+                                        '<div class="panel-heading">'+
+                                '<i class="fa fa-exclamation-circle fa-fw"></i>'+list[i].errorMessage+'</div>'+
+                            '<div class="panel-body"><ul><li><i class="fa fa-file fa-fw"></i>'+'出错脚本：'+ list[i].scriptURI +
+                                    '</li> <li><i class="fa fa-ellipsis-v fa-fw"></i>'+'出错行号：'+ list[i].lineNumber +'</li>'+
+                                    '<li><i class="fa fa-ellipsis-h fa-fw"></i>出错列号：'+ list[i].columnNumber +'</li>'+
+                                    '<li><i class="fa fa-desktop fa-fw"></i>出错用户浏览器：'+ list[i].browser +'</li>'+
+                                    '<li><i class="fa fa-apple fa-fw"></i>出错用户操作系统：'+ list[i].os +'</li> </ul></div>'+
+                            '<div class="panel-footer"><i class="fa fa-history fa-fw"></i>出错时间：'+ list[i].timestamp +
+                            '</div></div>';
+                                        }
+                                        $("#errorInfoPanel").html(html);
+                                        $("#myModal").modal("show");
+                                        
+                                        });
+                                    });
+
+                                    var listDiv=document.getElementById("errorListDiv");
+                                    listDiv.innerHTML = html;
+                                </script>
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">错误详情</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                    <div class="panel-body" id="errorInfoPanel">
+                        
+                            <!-- <div class="panel-heading">
+                                <i class="fa fa-exclamation-circle fa-fw"></i>Uncaught ReferenceError: nlk is not defined
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li>
+                                        <i class="fa fa-file fa-fw"></i>出错脚本：http://www.test.com/js/index.js
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-ellipsis-v fa-fw"></i>出错行号：139
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-ellipsis-h fa-fw"></i>出错列号：1
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-desktop fa-fw"></i>出错用户浏览器：Chrome
+                                    </li>
+                                    <li>
+                                        <i class="fa fa-apple fa-fw"></i>出错用户操作系统：Windows 10
+                                    </li>                               
+                                </ul>
+                            </div>
+                            <div class="panel-footer">
+                                <i class="fa fa-history fa-fw"></i>出错时间：2014/4/24 17:06
+                            </div> -->
+                    
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                   
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- DataTables JavaScript -->
+    <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+    <script>
+    $(document).ready(function() {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+    </script>
+</body>
+
+</html>

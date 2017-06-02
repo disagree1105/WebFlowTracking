@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户行为监控</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- jQuery -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+
+    <script src="js/util/util.js"></script>
+</head>
+
+<body>
+<script>
+    var appId=GetQueryString('appId');
+    window.onload=function(){
+        document.getElementById("appName").value = getAppName();
+        document.getElementById("appUrl").value = getAppUrl(appId);
+        document.getElementById("appId").value = appId;
+        var map=getAppConfig(appId);
+        document.getElementById("apdexT").value = map["apdexT"];
+        document.getElementById("dataSaveTime").value = map["dataSaveTime"];
+    }
+    function saveConfig1(){
+        $.ajax({
+                url: "http://localhost:8888/app/update",
+                type: "GET",
+                dataType:"html",
+                async : false,
+                data : {
+                        "appId":appId,
+                        "appName":document.getElementById("appName").value,
+                        "url":document.getElementById("appUrl").value
+                },
+                success:function(data){
+                    document.getElementById("errorTip").style.display="";
+                    document.getElementById("shortMessage").innerHTML="恭喜!";
+                    document.getElementById("errorMessage").innerHTML="应用信息修改成功";
+                    setTimeout(function(){ window.location.href='setting.html'+'?uid='+GetQueryString('uid')+'&appId='+GetQueryString('appId')+'&appName='+document.getElementById("appName").value;}, 1000);
+                },
+             error:function(){
+                console.log("服务器连接失败，无法修改应用信息");
+                document.getElementById("errorTip").style.display="";
+                document.getElementById("errorMessage").innerHTML="服务器连接失败，无法修改应用信息";
+             }
+            })
+    }
+    function saveConfig2(){
+        $.ajax({
+                url: "http://localhost:8888/app/config/update",
+                type: "GET",
+                dataType:"html",
+                async : false,
+                data : {
+                        "appId":appId,
+                        "apdexT":document.getElementById("apdexT").value,
+                        "dataSaveTime":document.getElementById("dataSaveTime").value
+                },
+                success:function(data){
+                    document.getElementById("errorTip").style.display="";
+                    document.getElementById("shortMessage").innerHTML="恭喜!";
+                    document.getElementById("errorMessage").innerHTML="应用配置修改成功";
+                    setTimeout(function(){ window.location.href='setting.html'+'?uid='+GetQueryString('uid')+'&appId='+GetQueryString('appId')+'&appName='+document.getElementById("appName").value;}, 1000);
+                },
+             error:function(){
+                console.log("服务器连接失败，无法修改应用信息");
+                document.getElementById("errorTip").style.display="";
+                document.getElementById("errorMessage").innerHTML="服务器连接失败，无法修改应用配置";
+             }
+            })
+    }
+</script>
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">用户：<script>document.write(getUserName(GetQueryString('uid')));</script></a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <a href="#" onclick="window.location.href='application.html?uid='+GetQueryString('uid');"><i class="fa fa-th-large fa-fw"></i>所用应用</a>
+                        </li>
+                        <li class="sidebar-search">
+                        <font color="#337ab7">当前应用：
+                        <script>
+                        document.write(getAppName());
+                        </script>
+                        </font>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('index.html')"><i class="fa fa-dashboard fa-fw"></i>应用概况</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>云服务用户操作记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationDashboard.html')"><i class="fa fa-hand-o-up fa-fw"></i>操作概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationList.html')"><i class="fa fa-list fa-fw"></i>操作详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="userVisit.html"><i class="fa fa-users fa-fw"></i>云服务用户浏览记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitDashboard.html')"><i class="fa fa-eye fa-fw"></i>浏览概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitList.html')"><i class="fa fa-list fa-fw"></i>浏览详情及用户轨迹</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="error.html"><i class="fa fa-exclamation-circle fa-fw"></i>应用出错记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorDashboard.html')"><i class="fa fa-bell fa-fw"></i>出错概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorList.html')"><i class="fa fa-list fa-fw"></i>出错详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('heatMap.html')"><i class="fa fa-fire fa-fw"></i>页面点击热图</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('setting.html')"><i class="fa fa-wrench fa-fw"></i>应用设置</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('help.html')"><i class="fa fa-question-circle fa-fw"></i>帮助</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-6">
+                    <h1 class="page-header">应用信息</h1>
+                    </div>
+                    <!-- /.col-lg-6 -->
+
+                <div class="col-lg-6">
+                    <div class="alert alert-warning" style="display:none;" id="errorTip">
+                        <a href="#"  onclick="document.getElementById('errorTip').style.display='none';">
+                            &times;
+                        </a>
+                        <strong id="shortMessage">抱歉！</strong>
+                        <div id="errorMessage">
+                        连接服务器失败。
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            应用设置
+                        </div>
+                        <!-- /.panel heading -->
+                        <div class="panel-body">
+                        <ul class="nav nav-tabs">
+                                <li class="active"><a href="#baseInfo" data-toggle="tab">应用基本信息</a>
+                                </li>
+                                <li><a href="#config" data-toggle="tab">应用参数设置</a>
+                                </li>
+                        </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active" id="baseInfo">
+                            <div class="row">
+                            <div class="col-lg-4">
+                                
+                                <div class="form-group">
+                                    <label>应用名称</label>
+                                    <input class="form-control" id="appName" value="正在获取名称" >
+                                </div>
+                                <div class="form-group">
+                                    <label>应用URL</label>
+                                    <input class="form-control" id="appUrl" value="正在获取url" >
+                                </div>
+                                <div class="form-group">
+                                    <label>应用id</label>
+                                    <input class="form-control" id="appId" value='正在获取应用id' disabled>
+                                </div>
+                                <center><button class="btn btn-primary" onclick="saveConfig1()">保存设置</button></center>
+                                
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            <div class="col-lg-8">
+                                <label>部署应用：</label>
+                                <textarea class="form-control" rows="5" id="textArea"></textarea>
+                                <script>
+                                var deploy='<script src="http://code.jquery.com/jquery-1.4.1.min.js"></scr'+'ipt><script src="http://pv.sohu.com/cityjson?ie=utf-8"></scr'+'ipt><style type="text/css"></style><script type="text/javascript">var visitUserId=getVisitUserId();var visitId=uuid();var userIp=returnCitySN["cip"];var citycode=returnCitySN["cid"];var city=returnCitySN["cname"];var appId="'+GetQueryString('appId')+'";var browser=getBrowserInfo();var os=detectOS();var timestamp=(new Date()).valueOf();var stopTime=0;var title=document.title;function detectOS(){var sUserAgent=navigator.userAgent;var isWin=(navigator.platform=="Win32")||(navigator.platform=="Windows");var isMac=(navigator.platform=="Mac68K")||(navigator.platform=="MacPPC")||(navigator.platform=="Macintosh")||(navigator.platform=="MacIntel");if(isMac)return"OS X";var isUnix=(navigator.platform=="X11")&&!isWin&&!isMac;if(isUnix)return"Unix";var isLinux=(String(navigator.platform).indexOf("Linux")>-1);if(isLinux)return"Linux";if(isWin){var isWin2K=sUserAgent.indexOf("Windows NT 5.0")>-1||sUserAgent.indexOf("Windows 2000")>-1;if(isWin2K)return"Windows 2000";var isWinXP=sUserAgent.indexOf("Windows NT 5.1")>-1||sUserAgent.indexOf("Windows XP")>-1;if(isWinXP)return"Windows XP";var isWin2003=sUserAgent.indexOf("Windows NT 5.2")>-1||sUserAgent.indexOf("Windows 2003")>-1;if(isWin2003)return"Windows 2003";var isWinVista=sUserAgent.indexOf("Windows NT 6.0")>-1||sUserAgent.indexOf("Windows Vista")>-1;if(isWinVista)return"Windows Vista";var isWin7=sUserAgent.indexOf("Windows NT 6.1")>-1||sUserAgent.indexOf("Windows 7")>-1;if(isWin7)return"Windows 7";var isWin8=sUserAgent.indexOf("Windows NT 6.2")>-1||sUserAgent.indexOf("Windows 8")>-1;if(isWin8)return"Windows 8";var isWin10=sUserAgent.indexOf("Windows NT 10.0")>-1||sUserAgent.indexOf("Windows 10")>-1;if(isWin10)return"Windows 10"}return"未知系统"}function getBrowserInfo(){var agent=navigator.userAgent.toLowerCase();var regStr_ie=/msie [\d.]+;/gi;var regStr_ff=/firefox'+'\\'+'/[\d.]+/gi; var regStr_chrome=/chrome\\/[\d.]+/gi;var regStr_saf=/safari\\/[\d.]+/gi;var regStr_edge=/edge\\/[\d.]+/gi;var browser;if(agent.indexOf("msie")>0){browser=agent.match(regStr_ie)}if(agent.indexOf("firefox")>0){browser=agent.match(regStr_ff)}if(agent.indexOf("chrome")>0){browser=agent.match(regStr_chrome)}if(agent.indexOf("safari")>0&&agent.indexOf("chrome")<0){browser=agent.match(regStr_saf)}if(agent.indexOf("edge")>0){browser=agent.match(regStr_edge)}browser=browser+"";return browser.substring(0,browser.indexOf("/"))}var rspTime;var start_time=new Date();var end_time="";var load_time=0;var rspClock=setInterval(function(){if(document.readyState=="complete"){getLoadingTime()}},500)function getLoadingTime(){end_time=new Date();load_time=end_time.getTime()-start_time.getTime();rspTime=load_time;clearInterval(rspClock)}var sendVisitDataClock=setInterval(function(){if(document.readyState=="complete"){sendVisitData()}},1000)function sendVisitData(visitTime){$.ajax({url:"http://localhost:8888/recordVisit",type:"GET",dataType:"jsonp",async:false,data:{"visitUserId":visitUserId,"visitId":visitId,"title":title,"userIp":userIp,"appId":appId,"city":city,"cityCode":citycode,"browser":browser,"os":os,"rspTime":rspTime,"timestamp":timestamp},jsonp:"callback",success:function(data){console.log("发送浏览信息成功"+data)},error:function(){console.log("服务器连接失败")}});clearInterval(sendVisitDataClock)}var clickInfo="[";var heatmapList="[";window.addEventListener("click",function(e){var targ;var operType;var operName;var timestamp;var heatstr="{"x":"'+'e.clientX'+'","y":"'+'e.clientY'+'"}";if(heatmapList=="[")heatmapList+=heatstr;else heatmapList+=","+heatstr;console.log(heatmapList);if(e.target)targ=e.target;else if(e.srcElement)targ=e.srcElement if(targ.nodeType==3)targ=targ.parentNode;var tname=targ.tagName;if(tname=="A"){operType=tname;operName=targ.text;timestamp=(new Date()).valueOf()}else{operType=tname;operName=targ.value;timestamp=(new Date()).valueOf()}var str="{"operType":"'+'operType'+'","operName":"'+'operName'+'","timestamp":"'+'timestamp'+'"}";if(clickInfo=="[")clickInfo+=str;else clickInfo+=","+str;console.log(clickInfo);});var sendClickDataClock=setInterval(function(){stopTime++;sendClickData();sendHeatmap();updateStopTime(stopTime)},1000*60)function sendClickData(){$.ajax({url:"http://localhost:8888/recordOperation",type:"GET",dataType:"jsonp",traditional:true,async:false,data:{"visitUserId":visitUserId,"appId":appId,"visitId":visitId,"clickInfo":clickInfo+"]"},jsonp:"callback",success:function(data){console.log("发送操作记录成功："+data)},error:function(){console.log("服务器连接失败")}});clickInfo="["}function sendHeatmap(){$.ajax({url:"http://localhost:8888/recordHeatmap",type:"GET",dataType:"jsonp",traditional:true,async:false,data:{"appId":appId,"heatmapList":heatmapList+"]"},jsonp:"callback",success:function(data){console.log("发送热图信息成功："+data)},error:function(){console.log("服务器连接失败")}});heatmapList="["}function updateStopTime(stopTime){$.ajax({url:"http://localhost:8888/stopTime/update",type:"GET",dataType:"jsonp",traditional:true,async:false,data:{"appId":appId,"visitId":visitId,"stopTime":stopTime},jsonp:"callback",success:function(data){console.log("更新停留时间记录成功："+data)},error:function(){console.log("服务器连接失败")}})}window.onerror=function(errorMessage,scriptURI,lineNumber,columnNumber){console.log("错误信息：",errorMessage);console.log("出错文件：",scriptURI);console.log("出错行号：",lineNumber);console.log("出错列号：",columnNumber);console.log("出错时间：",(new Date()).valueOf());sendErrorData(errorMessage,scriptURI,lineNumber,columnNumber,(new Date()).valueOf())}function sendErrorData(errorMessage,scriptURI,lineNumber,columnNumber,timestamp){$.ajax({url:"http://localhost:8888/recordError",type:"GET",dataType:"jsonp",async:false,data:{"visitId":visitId,"appId":appId,"errorMessage":errorMessage,"scriptURI":scriptURI,"lineNumber":lineNumber,"columnNumber":columnNumber,"timestamp":timestamp},jsonp:"callback",success:function(data){console.log("发送错误信息成功"+data)},error:function(){console.log("服务器连接失败")}})}function setCookie(name,value,expiredays){var exdate=new Date();exdate.setDate(exdate.getDate()+expiredays);document.cookie=name+"="+escape(value)+((expiredays==null)?"":"; expires="+exdate.toGMTString())}function getVisitUserId(){var cookieId=getCookie("visitUserId");console.log("get from cookie:"+cookieId);if(cookieId!=null&&cookieId!=""){return cookieId}else{var newId=uuid();setCookie("visitUserId",newId,365);return newId}}function getCookie(name){if(document.cookie.length>0){var c_start=document.cookie.indexOf(name+"=")if(c_start!=-1){c_start=c_start+name.length+1 var c_end=document.cookie.indexOf(";",c_start)if(c_end==-1){c_end=document.cookie.length}return unescape(document.cookie.substring(c_start,c_end))}}return""}function uuid(){var s=[];var hexDigits="0123456789abcdef";for(var i=0;i<36;i++){s[i]=hexDigits.substr(Math.floor(Math.random()*0x10),1)}s[14]="4";s[19]=hexDigits.substr((s[19]&0x3)|0x8,1);s[8]=s[13]=s[18]=s[23]="-";var uuid=s.join("");return uuid}</scr'+'ipt>';
+                                    
+                                    document.getElementById("textArea").innerHTML=deploy;
+                                </script>
+                                <br>
+                                <label>请将以上代码段复制到您主页代码中的head部分，以便完成部署</label>
+                            </div>
+                            <!-- /.col-lg-6 -->
+                            </div>
+                            <!-- /.row -->
+                            </div>
+                            <!-- /.baseInfo -->
+                            <div class="tab-pane fade" id="config">
+                                <div class="row">
+                                <div class="col-md-4 col-md-offset-2">
+                                    
+                                        <div class="form-group">
+                                            <label>应用apdex</label>
+                                            <input class="form-control" id="apdexT" value="正在获取" id="appApdex">
+                                            设置该应用的Apdex T值，即能让用户满意的页面加载时间的阈值，单位为毫秒，缺省值为2000毫秒。
+                                        </div>
+                                        <div class="form-group">
+                                            <label>数据保存天数</label>
+                                            <input class="form-control" id="dataSaveTime" value="正在获取" >
+                                            设置该应用的数据保存天数，默认为30天。
+                                        </div>
+                                    <center><button type="submit" class="btn btn-primary" onclick="saveConfig2()">保存设置</button></center>
+                                    
+                                </div>
+                                <!-- /col-md-4 -->
+                                </div>
+                                <!-- /.row -->
+                            </div>
+                            <!-- /.config -->
+                            </div>
+                            <!-- /.tab-content -->
+                            
+                        </div>
+                        <!-- /.panel body -->
+                    </div>
+                </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>

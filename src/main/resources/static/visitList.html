@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户行为监控</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- jQuery -->
+    <script src="js/jquery-3.1.1.min.js"></script>
+
+    <script src="js/util/util.js"></script>
+    <script src="js/util/getList.js"></script>
+</head>
+
+<body>
+<script>
+    var appId=GetQueryString('appId');
+    var style=new Array('<div class="timeline-badge"><i class="fa fa-check"></i>',
+                '<div class="timeline-badge warning"><i class="fa fa-credit-card"></i>',
+                '<div class="timeline-badge success"><i class="fa fa-comments"></i>',
+                '<div class="timeline-badge danger"><i class="fa fa-thumb-tack"></i>',
+                '<div class="timeline-badge info"><i class="fa fa-save"></i>');
+    function getTime(timestamp){
+        var now= (new Date()).valueOf();
+        var diff = Math.round((now - timestamp)/1000);
+        if(diff <60)
+        return diff.toString()+'秒前';
+        else if(diff>=60 && diff < 60*60)
+        return Math.round((diff/60)).toString()+'分钟前';
+        else if(diff>=3600 && diff < 3600*24)
+        return Math.round((diff/3600)).toString()+'小时前';
+        else if(diff>=3600*24)
+        return Math.round((diff/3600/24)).toString()+'天前';
+    }
+    function getStopTime(time){
+        if(time<60)
+            return time.toString()+'秒';
+        else 
+            return Math.round((time/60)).toString()+'分钟';
+    }
+</script>
+    <div id="wrapper">
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">用户：<script>document.write(getUserName(GetQueryString('uid')));</script></a>
+            </div>
+            <!-- /.navbar-header -->
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user -->
+                </li>
+                <!-- /.dropdown -->
+            </ul>
+            <!-- /.navbar-top-links -->
+
+            <div class="navbar-default sidebar" role="navigation">
+                <div class="sidebar-nav navbar-collapse">
+                    <ul class="nav" id="side-menu">
+                        <li class="sidebar-search">
+                            <a href="#" onclick="window.location.href='application.html?uid='+GetQueryString('uid');"><i class="fa fa-th-large fa-fw"></i>所用应用</a>
+                        </li>
+                        <li class="sidebar-search">
+                        <font color="#337ab7">当前应用：
+                        <script>
+                        document.write(getAppName());
+                        </script>
+                        </font>
+                        </li>
+                        <li>
+                           <a href="#" onclick="gotoHtml('index.html')"><i class="fa fa-dashboard fa-fw"></i>应用概况</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>云服务用户操作记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationDashboard.html')"><i class="fa fa-hand-o-up fa-fw"></i>操作概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('operationList.html')"><i class="fa fa-list fa-fw"></i>操作详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="userVisit.html"><i class="fa fa-users fa-fw"></i>云服务用户浏览记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitDashboard.html')"><i class="fa fa-eye fa-fw"></i>浏览概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('visitList.html')"><i class="fa fa-list fa-fw"></i>浏览详情及用户轨迹</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="error.html"><i class="fa fa-exclamation-circle fa-fw"></i>应用出错记录<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorDashboard.html')"><i class="fa fa-bell fa-fw"></i>出错概况</a>
+                                </li>
+                                <li>
+                                    <a href="#" onclick="gotoHtml('errorList.html')"><i class="fa fa-list fa-fw"></i>出错详情列表</a>
+                                </li>
+                            </ul>
+                            <!-- /.nav-second-level -->
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('heatMap.html')"><i class="fa fa-fire fa-fw"></i>页面点击热图</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('setting.html')"><i class="fa fa-wrench fa-fw"></i>应用设置</a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="gotoHtml('help.html')"><i class="fa fa-question-circle fa-fw"></i>帮助</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.sidebar-collapse -->
+            </div>
+            <!-- /.navbar-static-side -->
+        </nav>
+
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">浏览详情及用户轨迹</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            浏览列表
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                                <thead>
+                                    <tr >
+                                        <th>用户ip</th>
+                                        <th>浏览器</th>
+                                        <th>操作系统</th>
+                                        <th>首次访问时间</th>
+                                        <th>最后访问时间</th>
+                                        <th>会话数</th>
+                                        <th>查看</th>
+                                    </tr>
+                                </thead>
+                                <tbody id='visitListDiv'>
+                                    <!-- <tr>
+                                        <td>1</td>
+                                        <td>Internet Explorer 10.0</td>
+                                        <td>Win 10</td>
+                                        <td>2017/4/23 11:34</td>
+                                        <td>2017/4/24 14:02</td>
+                                        <td>5</td>
+                                        <td>
+                                        <button class="btn btn-outline btn-primary btn-sm" data-toggle="modal" data-target="#myModal">
+                                            查看用户轨迹
+                                        </button>
+                                        </td>
+                                    </tr>-->
+                                    <script>
+                                    var list=getVisitList(GetQueryString('appId'));
+                                    var html="";
+                                    $.each(list, function(i, obj) {
+                                        var reg=new RegExp("[^0-9]","g");
+                                        var strIp=obj.userIp.replace(reg,"-");
+                                        html+='<tr>'+
+                                        '<td>'+obj.userIp+'</td>'+
+                                        '<td>'+obj.browser+'</td>'+
+                                        '<td>'+obj.os+'</td>'+
+                                        '<td>'+obj.firstVisit+'</td>'+
+                                        '<td>'+obj.lastVisit+'</td>'+
+                                        '<td>'+obj.sessionCount+'</td>'+
+                                        '<td>'+
+                                        "<button class=\"btn btn-outline btn-primary btn-sm\" id=\"queryTrack"+strIp+"\">"+
+                                        '查看用户轨迹</button>'+
+                                        '</td>'+
+                                        '</tr>';
+
+                                        $(document).on("click", "#queryTrack"+strIp, function() {
+                                        // $("#del_app_id").val(obj.appId);
+                                        // $("#delAppName").html("<strong>"+obj.appName+"</strong>");
+                                        // $('#delAppModal').modal('show');
+                                        var list=getTrack(appId,obj.userIp);
+                                        var flag= true;
+                                        var liStyle = '<li>';
+                                        var html="";
+                                        for(var i=0;i<list.length;i++){
+                                            if(!flag){
+                                                liStyle = '<li class="timeline-inverted">';
+                                            }else{
+                                                liStyle = '<li>';
+                                            }
+
+                                            html += liStyle+ style[i%5] + '</div>'+
+                                                '<div class="timeline-panel">'+
+                                                '<div class="timeline-heading">'+
+                                                '<h4 class="timeline-title">' + list[i].title + '</h4>'+
+                                            '<p><small class="text-muted"><i class="fa fa-clock-o"></i>'+getTime(list[i].timestamp)+'</small>'+
+                                            '</p></div>'+
+                                            '<div class="timeline-body">'+
+                                            '在该页面停留了'+getStopTime(list[i].stopTime)+'<p>'+
+                                            '进行了'+list[i].operCount+'次操作</div></div></li>';
+                                            flag = !flag;
+                                        }
+                                        
+                                        $("#userTrackPanel").html(html);
+                                        $("#myModal").modal("show");
+                                        console.log("点击了查看用户"+obj.userIp+"的轨迹");
+                                        });
+                                    });
+                                    var listDiv=document.getElementById("visitListDiv");
+                                    listDiv.innerHTML = html;
+                                </script>
+                                </tbody>
+                            </table>
+                            <!-- /.table-responsive -->
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+            <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">用户轨迹</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel panel-default">
+                        <div class="panel-body">
+                            <ul class="timeline" id="userTrackPanel">
+                            服务器异常，无法获取用户轨迹
+                                <!-- <li>
+                                    <div class="timeline-badge"><i class="fa fa-check"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">网上书店-主页</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> 11分钟前</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            在该页面停留了了 2 分钟<p>
+                                            进行了 3 次操作
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge warning"><i class="fa fa-credit-card"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">网上书店-登录</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> 20分钟前</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            在该页面停留了了 2 分钟<p>
+                                            进行了 1 次操作
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="timeline-badge success"><i class="fa fa-comments"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">网上书店-注册</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> 25分钟前</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            在该页面停留了了 3 分钟<p>
+                                            进行了 4 次操作
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge danger"><i class="fa fa-thumb-tack"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">网上书店-主页</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> 36分钟前</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            在该页面停留了了 25 分钟<p>
+                                            进行了 4 次操作
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="timeline-badge info"><i class="fa fa-save"></i>
+                                    </div>
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">网上书店-购物车</h4>
+                                            <p><small class="text-muted"><i class="fa fa-clock-o"></i> 40分钟前</small>
+                                            </p>
+                                        </div>
+                                        <div class="timeline-body">
+                                            在该页面停留了了 5 分钟<p>
+                                            进行了 7 次操作
+                                        </div>
+                                    </div>
+                                </li> -->
+                                
+                            </ul>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                       
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+
+        <!-- DataTables JavaScript -->
+    <script src="vendor/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables-plugins/dataTables.bootstrap.min.js"></script>
+    <script src="vendor/datatables-responsive/dataTables.responsive.js"></script>
+
+    <script>
+    $(document).ready(function() {
+        $('#dataTables-example').DataTable({
+            responsive: true
+        });
+    });
+    </script>
+
+</body>
+
+</html>

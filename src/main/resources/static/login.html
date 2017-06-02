@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>用户登录</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- MetisMenu CSS -->
+    <link href="vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+<style type="text/css" >
+body{
+            background-image:url(images/background.jpg); 
+            background-repeat:no-repeat;
+            background-size: cover;
+        }
+</style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row" >
+            <div class="col-md-4 col-md-offset-4" >
+                <div class="login-panel panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">用户登录</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form name="form1" role="form" >
+                            <fieldset>
+                                <div class="form-group">
+                                    <input id="text1" class="form-control" placeholder="用户名/手机号" name="username" type="username" autofocus onblur="checkname()">
+                                    <div id="div1" style="display:inline;color:#FF6A6A" ></div>
+                                </div>
+                                <p/>
+                                <div class="form-group">
+                                    <input id="text2" class="form-control" placeholder="密码" name="password" type="password" value="" onblur="checkpassword()">
+                                    <div id="div2" style="display:inline;color:#FF6A6A"></div>
+                                </div>
+                                <div class="checkbox">
+                                    <label>
+                                        <input name="remember" type="checkbox" value="Remember Me" id="rmbUser">记住我
+                                    </label>
+                                </div>
+                                <!-- Change this to a button or input when using this as a form -->
+                                <a href="javascript:void(0)" id="loginBtn" class="btn btn-lg btn-success btn-block" onclick="login()">登录</a>
+                                <!-- <input type="submit" value="登录" id="loginBtn" class="btn btn-lg btn-success btn-block" onclick="login()"> -->
+                                <div id="loginTip"  class="alert alert-success" style="width:300px;display:none;">登录成功！</div>
+                                <div>
+                                    <a href="register.html">没有帐号？</a>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script language="javascript">  
+            function login(){
+            if(check()){
+                document.getElementById("loginBtn").innerHTML="登录中...";
+                var logDiv = document.getElementById("loginTip");
+            	console.log("登录中");
+            $.ajax({
+                url: "http://localhost:8888/login",
+                type: "GET",
+                dataType:"json",
+                data : {
+                        "username":document.form1.text1.value,
+                        "password":document.form1.text2.value
+                },
+                success:function(data){
+                	var obj=eval(data);
+                    if(obj.result.ret_code==0){
+                        logDiv.innerHTML=obj.result.message;
+                        logDiv.style.display="";
+                        document.getElementById("loginBtn").innerHTML="登录";
+                    }
+                    else{
+                        logDiv.innerHTML="登录成功！";
+                        logDiv.style.display="";
+                        var uid=obj.result._ret.uid;
+                        if(document.getElementById("rmbUser").checked){
+                                setCookie("uid",uid,30);
+                        }
+                        setTimeout(function(){ window.location.href="application.html?uid="+uid; }, 1000);
+                        
+                    }
+                },
+             error:function(){console.log("服务器连接失败");}
+            })
+        }
+        }
+
+            function setCookie(name,value,expiredays)
+            {
+                var exdate=new Date();
+                exdate.setDate(exdate.getDate()+expiredays);
+                document.cookie=name+ "=" +escape(value)+((expiredays==null) ? "" : "; expires="+exdate.toGMTString());
+            }
+            function checkname(){  
+                var div = document.getElementById("div1");  
+                div.innerHTML = "";  
+                var name1 = document.form1.text1.value;  
+                if (name1 == "") {  
+                    div.innerHTML = "用户名不能为空！";  
+                    return false;  
+                }  
+            
+                return true;  
+                  
+            }  
+              
+            function checkpassword(){  
+                var div = document.getElementById("div2");  
+                div.innerHTML = "";  
+                var password = document.form1.text2.value;  
+                if (password == "") {  
+                    div.innerHTML = "密码不能为空！";  
+                   
+                    return false;  
+                }  
+                return true;  
+            }  
+            function check(){  
+                if (checkname() && checkpassword()) {  
+                    return true;  
+                }  
+                else {  
+                    return false;  
+                }  
+            }  
+        </script>  
+
+
+
+    <!-- jQuery -->
+    <script src="vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="vendor/metisMenu/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="dist/js/sb-admin-2.js"></script>
+
+</body>
+
+</html>
